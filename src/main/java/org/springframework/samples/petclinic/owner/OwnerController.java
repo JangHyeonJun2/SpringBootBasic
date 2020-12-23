@@ -65,6 +65,7 @@ class OwnerController {
 	}
 
 	@PostMapping("/owners/new")
+	@LogExecutionTime
 	public String processCreationForm(@Valid Owner owner, BindingResult result) {
 		if (result.hasErrors()) {
 			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
