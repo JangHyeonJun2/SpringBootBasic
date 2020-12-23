@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.samples.petclinic.visit.Visit;
 import org.springframework.samples.petclinic.visit.VisitRepository;
 import org.springframework.test.web.servlet.MockMvc;
@@ -87,6 +89,14 @@ class OwnerControllerTests {
 		given(this.visits.findByPetId(max.getId())).willReturn(Collections.singletonList(visit));
 	}
 
+	@Autowired
+	ApplicationContext applicationContext;
+	@Test
+	public void getBean() {
+		OwnerController ownerController = applicationContext.getBean(OwnerController.class);
+		Assertions.assertThat(ownerController).isNotNull();
+	}
+
 	@Test
 	void testInitCreationForm() throws Exception {
 		mockMvc.perform(get("/owners/new")).andExpect(status().isOk()).andExpect(model().attributeExists("owner"))
@@ -124,8 +134,8 @@ class OwnerControllerTests {
 
 	@Test
 	void testProcessFindFormByLastName() throws Exception {
-		given(this.owners.findByLastName(george.getLastName())).willReturn(Lists.newArrayList(george));
-		mockMvc.perform(get("/owners").param("lastName", "Franklin")).andExpect(status().is3xxRedirection())
+		given(this.owners.findByLastName(george.getFirstName())).willReturn(Lists.newArrayList(george));
+		mockMvc.perform(get("/owners").param("firstName", "Franklin")).andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/owners/" + TEST_OWNER_ID));
 	}
 
